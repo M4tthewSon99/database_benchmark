@@ -1,0 +1,95 @@
+DATABASE BENCHMARK SYNTHESIS REPORT
+==================================================
+
+Report generated: 2025-06-03T19:01:59.403052
+Total benchmark runs: 60
+
+SUMMARY BY DATA STRUCTURE:
+------------------------------
+
+HASHTABLE_INMEMORY:
+  Databases: memcached, redis
+  Workloads: balanced, write_heavy, read_heavy, range_query
+  Thread counts: [1, 4, 8, 16]
+  Total runs: 28
+  Best throughput: 103519.67 ops/sec (redis, balanced, 16 threads)
+
+BTREE:
+  Databases: mongodb
+  Workloads: balanced, write_heavy, read_heavy, range_query
+  Thread counts: [1, 4, 8, 16]
+  Total runs: 16
+  Best throughput: 51413.88 ops/sec (mongodb, balanced, 16 threads)
+
+LSM_TREE:
+  Databases: rocksdb
+  Workloads: balanced, write_heavy, read_heavy, range_query
+  Thread counts: [1, 4, 8, 16]
+  Total runs: 16
+  Best throughput: 119189.51 ops/sec (rocksdb, read_heavy, 8 threads)
+
+
+PERFORMANCE COMPARISON (Run Phase Throughput):
+--------------------------------------------------
+Database     Workload     Threads  Throughput (ops/sec)
+------------------------------------------------------------
+memcached    balanced     1        26434.05            
+memcached    balanced     4        46860.36            
+memcached    balanced     8        57339.45            
+memcached    balanced     16       57306.59            
+memcached    write_heavy  1        25425.88            
+memcached    write_heavy  4        47281.32            
+memcached    write_heavy  16       49677.10            
+memcached    write_heavy  8        57736.72            
+memcached    read_heavy   8        55741.36            
+memcached    read_heavy   16       56625.14            
+memcached    read_heavy   4        47036.69            
+memcached    read_heavy   1        24618.41            
+redis        balanced     16       103519.67           
+redis        balanced     8        95602.29            
+redis        balanced     4        71174.38            
+redis        balanced     1        41753.65            
+redis        write_heavy  8        59488.40            
+redis        write_heavy  1        27624.31            
+redis        write_heavy  4        46339.20            
+redis        write_heavy  16       65445.03            
+redis        read_heavy   4        69541.03            
+redis        read_heavy   1        36324.01            
+redis        read_heavy   16       98135.43            
+redis        read_heavy   8        95510.98            
+redis        range_query  1        919.84              
+redis        range_query  16       2243.86             
+redis        range_query  4        1515.27             
+redis        range_query  8        2045.91             
+mongodb      balanced     1        13974.29            
+mongodb      balanced     4        36805.30            
+mongodb      balanced     16       51413.88            
+mongodb      balanced     8        48169.56            
+mongodb      write_heavy  4        35612.54            
+mongodb      write_heavy  1        14172.34            
+mongodb      write_heavy  16       46816.48            
+mongodb      write_heavy  8        45269.35            
+mongodb      read_heavy   16       45537.34            
+mongodb      read_heavy   8        49431.54            
+mongodb      read_heavy   1        14382.28            
+mongodb      read_heavy   4        35868.01            
+mongodb      range_query  8        23965.30            
+mongodb      range_query  16       25829.78            
+mongodb      range_query  4        14557.31            
+mongodb      range_query  1        4362.93             
+rocksdb      balanced     4        87489.06            
+rocksdb      balanced     1        65530.80            
+rocksdb      balanced     16       91827.36            
+rocksdb      balanced     8        85324.23            
+rocksdb      write_heavy  4        72254.34            
+rocksdb      write_heavy  16       74074.07            
+rocksdb      write_heavy  1        57836.90            
+rocksdb      write_heavy  8        66622.25            
+rocksdb      read_heavy   8        119189.51           
+rocksdb      read_heavy   16       118764.85           
+rocksdb      read_heavy   4        118623.96           
+rocksdb      read_heavy   1        83892.62            
+rocksdb      range_query  8        64308.68            
+rocksdb      range_query  16       67331.00            
+rocksdb      range_query  4        50743.39            
+rocksdb      range_query  1        15339.31            

@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KV-Store Benchmark Dashboard</title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .chart-container {
+                height: 400px;
+            }
+            .chart-container-large {
+                height: 500px;
+            }
+            .chart-container-small {
+                height: 300px;
+            }
+            .nav-tab {
+                transition: all 0.3s ease;
+            }
+            .nav-tab.active {
+                background-color: #3b82f6;
+                color: white;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    KV-Store Benchmark Dashboard
+                </h1>
+                <p class="mt-1 text-sm text-gray-600">
+                    Comprehensive analysis of B+ Tree, LSM Tree, and Hashtable
+                    Key-Value Stores
+                </p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8">
+                    <button
+                        class="nav-tab active px-3 py-2 text-sm font-medium rounded-md"
+                        onclick="showSection('overview')"
+                    >
+                        Performance Overview
+                    </button>
+                    <button
+                        class="nav-tab px-3 py-2 text-sm font-medium rounded-md"
+                        onclick="showSection('workloads')"
+                    >
+                        Workload Deep Dives
+                    </button>
+                    <button
+                        class="nav-tab px-3 py-2 text-sm font-medium rounded-md"
+                        onclick="showSection('scalability')"
+                    >
+                        Threading Scalability
+                    </button>
+                    <button
+                        class="nav-tab px-3 py-2 text-sm font-medium rounded-md"
+                        onclick="showSection('latency')"
+                    >
+                        Latency Analysis
+                    </button>
+                    <button
+                        class="nav-tab px-3 py-2 text-sm font-medium rounded-md"
+                        onclick="showSection('design')"
+                    >
+                        Use Case Analysis
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <!-- 1. Performance Overview Dashboard -->
+            <section id="overview-section" class="section-content">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-6">
+                        Performance Overview Dashboard
+                    </h2>
+
+                    <!-- Summary Cards -->
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+                    >
+                        <div
+                            id="bestBalanced"
+                            class="bg-white p-6 rounded-lg shadow"
+                        >
+                            <h3 class="text-sm font-medium text-gray-500">
+                                Best for Balanced
+                            </h3>
+                            <div class="mt-2">
+                                <div
+                                    class="text-2xl font-bold text-blue-600"
+                                    id="balancedWinner"
+                                >
+                                    Loading...
+                                </div>
+                                <div
+                                    class="text-sm text-gray-600"
+                                    id="balancedThroughput"
+                                >
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            id="bestReadHeavy"
+                            class="bg-white p-6 rounded-lg shadow"
+                        >
+                            <h3 class="text-sm font-medium text-gray-500">
+                                Best for Read Heavy
+                            </h3>
+                            <div class="mt-2">
+                                <div
+                                    class="text-2xl font-bold text-orange-600"
+                                    id="readHeavyWinner"
+                                >
+                                    Loading...
+                                </div>
+                                <div
+                                    class="text-sm text-gray-600"
+                                    id="readHeavyThroughput"
+                                >
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            id="bestWriteHeavy"
+                            class="bg-white p-6 rounded-lg shadow"
+                        >
+                            <h3 class="text-sm font-medium text-gray-500">
+                                Best for Write Heavy
+                            </h3>
+                            <div class="mt-2">
+                                <div
+                                    class="text-2xl font-bold text-green-600"
+                                    id="writeHeavyWinner"
+                                >
+                                    Loading...
+                                </div>
+                                <div
+                                    class="text-sm text-gray-600"
+                                    id="writeHeavyThroughput"
+                                >
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            id="bestRangeQuery"
+                            class="bg-white p-6 rounded-lg shadow"
+                        >
+                            <h3 class="text-sm font-medium text-gray-500">
+                                Best for Range Query
+                            </h3>
+                            <div class="mt-2">
+                                <div
+                                    class="text-2xl font-bold text-red-600"
+                                    id="rangeQueryWinner"
+                                >
+                                    Loading...
+                                </div>
+                                <div
+                                    class="text-sm text-gray-600"
+                                    id="rangeQueryThroughput"
+                                >
+                                    Loading...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Throughput Comparison -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-8">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Overall Throughput Comparison
+                        </h3>
+                        <div
+                            id="overallThroughputChart"
+                            class="chart-container-large"
+                        ></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Workload-Specific Deep Dives -->
+            <section id="workloads-section" class="section-content hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-6">
+                        Workload-Specific Deep Dives
+                    </h2>
+
+                    <div class="grid grid-cols-1 gap-8">
+                        <!-- Read Heavy Analysis -->
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h3
+                                class="text-lg font-semibold mb-4 text-blue-600"
+                            >
+                                1. Read-Heavy (90% gets, 10% puts)
+                            </h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4
+                                        class="text-md font-semibold text-gray-700 mb-2"
+                                    >
+                                        Performance by Thread Count
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                1 Thread
+                                            </h5>
+                                            <div
+                                                id="readHeavy1Thread"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                4 Threads
+                                            </h5>
+                                            <div
+                                                id="readHeavy4Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                8 Threads
+                                            </h5>
+                                            <div
+                                                id="readHeavy8Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                16 Threads
+                                            </h5>
+                                            <div
+                                                id="readHeavy16Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="space-y-3">
+                                        <div
+                                            class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                        >
+                                            <span
+                                                class="font-bold text-green-800 text-lg"
+                                                >1</span
+                                            >
+                                            <div>
+                                                <span
+                                                    class="font-semibold text-green-800"
+                                                    >RocksDB</span
+                                                >
+                                                <p class="text-gray-700 mt-1">
+                                                    Combines a large block cache
+                                                    with one Bloom (or Ribbon)
+                                                    filter per SST file. In a
+                                                    point lookup the filter
+                                                    chain usually rules out
+                                                    every level but one, so the
+                                                    engine either (a) serves the
+                                                    value straight from cache or
+                                                    (b) touches exactly one 4 KB
+                                                    block on disk. The result is
+                                                    high throughput even when
+                                                    the data set exceeds RAM.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                        >
+                                            <span
+                                                class="font-bold text-purple-800 text-lg"
+                                                >2</span
+                                            >
+                                            <div>
+                                                <span
+                                                    class="font-semibold text-purple-800"
+                                                    >Redis</span
+                                                >
+                                                <p class="text-gray-700 mt-1">
+                                                    A GET is literally one hash
+                                                    and one pointer dereference,
+                                                    which lets Redis deliver
+                                                    about 36 k ops/s on a lone
+                                                    core and climb to just under
+                                                    100 k ops/s when network I/O
+                                                    is overlapped by additional
+                                                    client threads. Throughput
+                                                    still trails RocksDB because
+                                                    every command must pass
+                                                    through a single event-loop
+                                                    thread, adding a few
+                                                    microseconds of dispatch
+                                                    overhead that RocksDB
+                                                    avoids.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                        >
+                                            <span
+                                                class="font-bold text-purple-700 text-lg"
+                                                >3</span
+                                            >
+                                            <div>
+                                                <span
+                                                    class="font-semibold text-purple-700"
+                                                    >Memcached</span
+                                                >
+                                                <p class="text-gray-700 mt-1">
+                                                    Although the data live
+                                                    entirely in DRAM, each
+                                                    lookup has to grab a
+                                                    hash-bucket or slab mutex,
+                                                    and that lock accounting
+                                                    shows up in the numbers: ~25
+                                                    k ops/s with one worker and
+                                                    only ~56 k ops/s even under
+                                                    heavier load. The mutex
+                                                    traffic, plus an extra
+                                                    memory copy from slab to
+                                                    write buffer, trims enough
+                                                    microseconds from every
+                                                    request to keep Memcached
+                                                    well below both Redis and
+                                                    RocksDB.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                        >
+                                            <span
+                                                class="font-bold text-blue-800 text-lg"
+                                                >4</span
+                                            >
+                                            <div>
+                                                <span
+                                                    class="font-semibold text-blue-800"
+                                                    >MongoDB</span
+                                                >
+                                                <p class="text-gray-700 mt-1">
+                                                    Every key access still walks
+                                                    three to four cached B-tree
+                                                    nodes, so a single thread
+                                                    achieves roughly 14 k ops/s
+                                                    and all threads together
+                                                    reach the mid-40 k range.
+                                                    Those extra pointer hops,
+                                                    object metadata checks, and
+                                                    document locks consume more
+                                                    CPU per lookup than a hash
+                                                    or LSM read
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Write Heavy Analysis -->
+                        <div class="bg-white p-6 rounded-lg shadow">
+                            <h3
+                                class="text-lg font-semibold mb-4 text-green-600"
+                            >
+                                2. Write-Heavy (10% gets, 90% puts)
+                            </h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4
+                                        class="text-md font-semibold text-gray-700 mb-2"
+                                    >
+                                        Performance by Thread Count
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                1 Thread
+                                            </h5>
+                                            <div
+                                                id="writeHeavy1Thread"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                4 Threads
+                                            </h5>
+                                            <div
+                                                id="writeHeavy4Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                8 Threads
+                                            </h5>
+                                            <div
+                                                id="writeHeavy8Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <h5
+                                                class="text-sm font-medium text-gray-600 mb-1"
+                                            >
+                                                16 Threads
+                                            </h5>
+                                            <div
+                                                id="writeHeavy16Threads"
+                                                class="chart-container-small"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="space-y-4">
+                                        <div class="space-y-3">
+                                            <div
+                                                class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                            >
+                                                <span
+                                                    class="font-bold text-green-800 text-lg"
+                                                    >1</span
+                                                >
+                                                <div>
+                                                    <span
+                                                        class="font-semibold text-green-800"
+                                                        >RocksDB</span
+                                                    >
+                                                    <p
+                                                        class="text-sm text-gray-700 mt-1"
+                                                    >
+                                                        An insert is just a WAL
+                                                        append plus a memtable
+                                                        write—both sequential,
+                                                        lock-free operations.
+                                                        Large in-memory write
+                                                        batches and background
+                                                        compaction keep the
+                                                        foreground path short,
+                                                        so throughput stays well
+                                                        ahead of every other
+                                                        engine at every thread
+                                                        count.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                            >
+                                                <span
+                                                    class="font-bold text-purple-800 text-lg"
+                                                    >2</span
+                                                >
+                                                <div>
+                                                    <span
+                                                        class="font-semibold text-purple-800"
+                                                        >Redis</span
+                                                    >
+                                                    <p
+                                                        class="text-sm text-gray-700 mt-1"
+                                                    >
+                                                        Writes are in-RAM
+                                                        pointer assignments;
+                                                        without an immediate
+                                                        fsync, the critical path
+                                                        is only hash computation
+                                                        and object creation.
+                                                        Although a single event
+                                                        loop serialises
+                                                        commands, that loop is
+                                                        efficient enough that
+                                                        Redis outpaces Memcached
+                                                        in three of the four
+                                                        thread settings.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                            >
+                                                <span
+                                                    class="font-bold text-purple-700 text-lg"
+                                                    >3</span
+                                                >
+                                                <div>
+                                                    <span
+                                                        class="font-semibold text-purple-700"
+                                                        >Memcached</span
+                                                    >
+                                                    <p
+                                                        class="text-sm text-gray-700 mt-1"
+                                                    >
+                                                        Pure memory inserts keep
+                                                        base latency low, but
+                                                        each mutation briefly
+                                                        grabs both a hash-bucket
+                                                        lock and a slab-class
+                                                        lock, adding overhead
+                                                        absent in Redis. Those
+                                                        mutex costs hold
+                                                        Memcached just below
+                                                        Redis except at the
+                                                        four-thread mark, where
+                                                        extra workers
+                                                        momentarily tip it
+                                                        ahead.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                            >
+                                                <span
+                                                    class="font-bold text-blue-800 text-lg"
+                                                    >4</span
+                                                >
+                                                <div>
+                                                    <span
+                                                        class="font-semibold text-blue-800"
+                                                        >MongoDB</span
+                                                    >
+                                                    <p
+                                                        class="text-sm text-gray-700 mt-1"
+                                                    >
+                                                        Every put traverses
+                                                        multiple B⁺-tree levels,
+                                                        may trigger leaf-page
+                                                        splits, and must be
+                                                        durably journaled. That
+                                                        heavier per-write work
+                                                        leaves MongoDB well
+                                                        behind the in-memory
+                                                        engines and far below
+                                                        RocksDB's append-only
+                                                        path in all
+                                                        configurations.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Balanced Analysis -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4 text-purple-600">
+                            3. Balanced (50% reads, 50% writes)
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h4
+                                    class="text-md font-semibold text-gray-700 mb-2"
+                                >
+                                    Performance by Thread Count
+                                </h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            1 Thread
+                                        </h5>
+                                        <div
+                                            id="balanced1Thread"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            4 Threads
+                                        </h5>
+                                        <div
+                                            id="balanced4Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            8 Threads
+                                        </h5>
+                                        <div
+                                            id="balanced8Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            16 Threads
+                                        </h5>
+                                        <div
+                                            id="balanced16Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="space-y-3">
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                    >
+                                        <span
+                                            class="font-bold text-purple-800 text-lg"
+                                            >1</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-purple-800"
+                                                >Redis</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                When reads and writes are both
+                                                O(1) RAM operations, adding the
+                                                other half of the workload
+                                                hardly hurts—until memory
+                                                pressure forces evictions. With
+                                                the data volume used here Redis
+                                                stays comfortably in memory and
+                                                tops the chart.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                    >
+                                        <span
+                                            class="font-bold text-green-800 text-lg"
+                                            >2</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-green-800"
+                                                >RocksDB</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                Each read is still
+                                                cache-plus-filter fast and each
+                                                write is still append-only, but
+                                                the MemTable flush frequency
+                                                increases relative to the
+                                                read-heavy run. Those extra
+                                                background flushes explain why
+                                                it trails Redis in the mixed
+                                                load.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                    >
+                                        <span
+                                            class="font-bold text-purple-700 text-lg"
+                                            >3</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-purple-700"
+                                                >Memcached</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                Lock contention now comes from
+                                                both gets and puts, so the
+                                                effective hit on concurrency is
+                                                bigger than in either extreme
+                                                workload, pushing the bar below
+                                                RocksDB.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                    >
+                                        <span
+                                            class="font-bold text-blue-800 text-lg"
+                                            >4</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-blue-800"
+                                                >MongoDB</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                The engine must interleave
+                                                random writes, journal syncs,
+                                                and buffer-cache reads. Cache
+                                                churn (constant eviction and
+                                                re-loading of data blocks in a
+                                                cache because the working set is
+                                                larger or “busier” than the
+                                                cache can comfortably hold) and
+                                                page pins (when the engine
+                                                temporarily locks a memory
+                                                page—typically while a writer is
+                                                modifying it—so the page cannot
+                                                be evicted or reused until the
+                                                pin is released) cut into both
+                                                sides of the 50/50 mix, leaving
+                                                it last.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Range Query Analysis -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4 text-orange-600">
+                            4. Range-Query (95% scans, 5% inserts)
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h4
+                                    class="text-md font-semibold text-gray-700 mb-2"
+                                >
+                                    Performance by Thread Count
+                                </h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            1 Thread
+                                        </h5>
+                                        <div
+                                            id="rangeQuery1Thread"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            4 Threads
+                                        </h5>
+                                        <div
+                                            id="rangeQuery4Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            8 Threads
+                                        </h5>
+                                        <div
+                                            id="rangeQuery8Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                    <div>
+                                        <h5
+                                            class="text-sm font-medium text-gray-600 mb-1"
+                                        >
+                                            16 Threads
+                                        </h5>
+                                        <div
+                                            id="rangeQuery16Threads"
+                                            class="chart-container-small"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="space-y-3">
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                    >
+                                        <span
+                                            class="font-bold text-green-800 text-lg"
+                                            >1</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-green-800"
+                                                >RocksDB</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                SST files are immutable, fully
+                                                sorted runs. Once a scan starts,
+                                                the iterator streams large
+                                                contiguous blocks, which modern
+                                                SSDs pre-fetch efficiently.
+                                                Levelled compaction keeps key
+                                                ranges from spanning many files,
+                                                so very few overlaps have to be
+                                                merged on the fly.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                    >
+                                        <span
+                                            class="font-bold text-blue-800 text-lg"
+                                            >2</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-blue-800"
+                                                >MongoDB</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                B⁺-tree leaves are physically
+                                                linked. After locating the first
+                                                key, the cursor walks those
+                                                links sequentially. It is
+                                                fundamentally a good fit for
+                                                scans, but each hop still means
+                                                a pointer chase and an
+                                                occasional uncached page, hence
+                                                ~2.5× slower than RocksDB's
+                                                flat-file streaming.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-red-50 rounded border-l-4 border-red-500"
+                                    >
+                                        <span
+                                            class="font-bold text-red-800 text-lg"
+                                            >3</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-red-800"
+                                                >Redis</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                The native key space is
+                                                hash-distributed, so a true
+                                                lexicographic range requires a
+                                                full iteration (SCAN) over all
+                                                keys. Only a small test data set
+                                                keeps this from dropping to
+                                                single-digit kops/sec.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-start space-x-3 p-3 bg-red-100 rounded border-l-4 border-red-600"
+                                    >
+                                        <span
+                                            class="font-bold text-red-900 text-lg"
+                                            >4</span
+                                        >
+                                        <div>
+                                            <span
+                                                class="font-semibold text-red-900"
+                                                >Memcached</span
+                                            >
+                                            <p class="text-gray-700 mt-1">
+                                                Provides no ordered data
+                                                structure whatsoever; a range
+                                                query degenerates into "dump
+                                                every key then filter
+                                                client-side," which is
+                                                prohibitive. The benchmark
+                                                therefore records effectively
+                                                zero useful throughput.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Threading Scalability Analysis -->
+            <section id="scalability-section" class="section-content hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-6">
+                        Threading Scalability Analysis
+                    </h2>
+
+                    <!-- Scaling Efficiency Explanation -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-8">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Understanding Scaling Efficiency
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div
+                                    class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500"
+                                >
+                                    <h4
+                                        class="font-semibold text-blue-800 mb-2"
+                                    >
+                                        What is Scaling Efficiency?
+                                    </h4>
+                                    <p class="text-sm text-gray-700">
+                                        <strong>Formula:</strong> (Actual
+                                        Throughput) ÷ (Single-Thread Performance
+                                        × Thread Count) × 100%
+                                    </p>
+                                    <p class="text-sm text-gray-700 mt-2">
+                                        Measures how well each database utilizes
+                                        additional threads compared to perfect
+                                        linear scaling.
+                                    </p>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div
+                                        class="p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                    >
+                                        <h5
+                                            class="font-semibold text-green-800"
+                                        >
+                                            100% Efficiency = Perfect Linear
+                                            Scaling
+                                        </h5>
+                                        <p class="text-sm text-gray-700">
+                                            Each additional thread provides full
+                                            benefit. Example: 1 thread = 25K
+                                            ops/sec → 4 threads = 100K ops/sec
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        class="p-3 bg-yellow-50 rounded border-l-4 border-yellow-500"
+                                    >
+                                        <h5
+                                            class="font-semibold text-yellow-800"
+                                        >
+                                            &lt; 100% Efficiency = Scaling
+                                            Bottlenecks
+                                        </h5>
+                                        <p class="text-sm text-gray-700">
+                                            Diminishing returns due to lock
+                                            contention, memory bandwidth limits,
+                                            or cache conflicts
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        class="p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                    >
+                                        <h5
+                                            class="font-semibold text-purple-800"
+                                        >
+                                            &gt; 100% Efficiency = Super-linear
+                                            Scaling
+                                        </h5>
+                                        <p class="text-sm text-gray-700">
+                                            Rare but possible due to better
+                                            cache utilization or reduced
+                                            per-thread overhead
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div
+                                    class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500"
+                                >
+                                    <h4
+                                        class="font-semibold text-orange-800 mb-2"
+                                    >
+                                        Why This Matters
+                                    </h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>
+                                            •
+                                            <strong>System Design:</strong>
+                                            Identify when adding threads helps
+                                            vs. hurts
+                                        </li>
+                                        <li>
+                                            •
+                                            <strong>Resource Planning:</strong>
+                                            Find optimal thread counts
+                                        </li>
+                                        <li>
+                                            •
+                                            <strong
+                                                >Bottleneck Detection:</strong
+                                            >
+                                            Reveal architectural limitations
+                                        </li>
+                                        <li>
+                                            •
+                                            <strong>Workload Impact:</strong>
+                                            See how different operations scale
+                                            differently
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <h4
+                                        class="font-semibold text-gray-800 mb-3"
+                                    >
+                                        Key Insights
+                                    </h4>
+                                    <div
+                                        class="space-y-2 text-sm text-gray-700"
+                                    >
+                                        <p>
+                                            •
+                                            <strong
+                                                >Perfect scaling is
+                                                rare:</strong
+                                            >
+                                            Most systems show diminishing
+                                            returns
+                                        </p>
+                                        <p>
+                                            •
+                                            <strong>Workload matters:</strong>
+                                            Same database scales differently for
+                                            reads vs. writes
+                                        </p>
+                                        <p>
+                                            •
+                                            <strong
+                                                >Architecture impacts:</strong
+                                            >
+                                            Hash tables, B+ trees, and LSM trees
+                                            have different scaling
+                                            characteristics
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scalability Curves -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-8">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Thread Scaling Efficiency by Workload
+                        </h3>
+
+                        <!-- Grid of 4 workload charts with explanations -->
+                        <div class="space-y-8">
+                            <!-- Balanced Workload -->
+                            <div
+                                class="border-l-4 border-blue-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-blue-800 mb-4"
+                                >
+                                    Balanced workload (50% reads / 50% writes)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="balancedScalabilityChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-blue-800"
+                                                    >Rank:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >MongoDB > Memcached ≈ Redis
+                                                    > RocksDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Document-level locks
+                                                            let several writer
+                                                            and reader threads
+                                                            proceed in parallel,
+                                                            and its group-commit
+                                                            journal amortises
+                                                            fsync, so it
+                                                            preserves the
+                                                            largest fraction of
+                                                            ideal linear
+                                                            speed-up.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Benefits from extra
+                                                            worker threads until
+                                                            hash-bucket and
+                                                            slab-allocator
+                                                            mutexes turn hot,
+                                                            giving it
+                                                            middling—but still
+                                                            positive—returns.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Keeps all command
+                                                            execution in a
+                                                            single event loop;
+                                                            additional client
+                                                            threads only queue,
+                                                            so efficiency falls.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Drops to last
+                                                            because the 50-50
+                                                            mix doubles memtable
+                                                            flushes and triggers
+                                                            frequent background
+                                                            compactions that
+                                                            steal cache lines
+                                                            and I/O bandwidth
+                                                            from foreground
+                                                            threads.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Read Heavy Workload -->
+                            <div
+                                class="border-l-4 border-orange-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-orange-800 mb-4"
+                                >
+                                    Read-heavy workload (90% reads / 10% writes)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="readHeavyScalabilityChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-orange-800"
+                                                    >Rank:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >MongoDB > Memcached ≈ Redis
+                                                    > RocksDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            With most requests
+                                                            satisfied out of the
+                                                            WiredTiger cache,
+                                                            MongoDB's
+                                                            pointer-chase
+                                                            pipeline scales well
+                                                            until shared cache
+                                                            traffic saturates.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Gains from multiple
+                                                            readers but still
+                                                            pays for brief
+                                                            hash-bucket locks,
+                                                            so its curve sits a
+                                                            little lower.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Again suffers from
+                                                            its single execution
+                                                            core, making
+                                                            efficiency decay
+                                                            quickly.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Finishes last
+                                                            because every extra
+                                                            reader hammering the
+                                                            block cache and
+                                                            Bloom-filter
+                                                            metadata causes
+                                                            contention on shared
+                                                            CPU caches and
+                                                            memory bandwidth,
+                                                            eroding its
+                                                            theoretical
+                                                            concurrency
+                                                            advantage.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Write Heavy Workload -->
+                            <div
+                                class="border-l-4 border-green-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-green-800 mb-4"
+                                >
+                                    Write-heavy workload (90% writes / 10%
+                                    reads)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="writeHeavyScalabilityChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-green-800"
+                                                    >Rank:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >MongoDB > Memcached ≈ Redis
+                                                    > RocksDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Document-level locks
+                                                            mean writers rarely
+                                                            block each other,
+                                                            and group-commit
+                                                            batches many updates
+                                                            into one journal
+                                                            flush; extra threads
+                                                            therefore convert
+                                                            into real work,
+                                                            giving the best
+                                                            scaling curve.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Inserts live in RAM,
+                                                            yet every write
+                                                            still grabs a
+                                                            hash-bucket and slab
+                                                            lock; contention on
+                                                            those brief critical
+                                                            sections trims—but
+                                                            doesn't erase—the
+                                                            benefit of more
+                                                            worker threads.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            All commands run in
+                                                            a single event loop;
+                                                            additional client
+                                                            threads only feed
+                                                            that loop faster, so
+                                                            once one core
+                                                            saturates,
+                                                            throughput
+                                                            flat-lines and
+                                                            efficiency falls.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            With 90% writes, the
+                                                            memtable fills
+                                                            often, triggering
+                                                            frequent flushes and
+                                                            compactions; those
+                                                            background jobs
+                                                            steal I/O and stall
+                                                            writers, producing
+                                                            the steepest drop in
+                                                            per-thread
+                                                            efficiency.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Range Query Workload -->
+                            <div
+                                class="border-l-4 border-red-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-red-800 mb-4"
+                                >
+                                    Range-query workload (95% scans / 5%
+                                    inserts)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="rangeQueryScalabilityChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-red-800"
+                                                    >Rank:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >MongoDB > RocksDB > Redis
+                                                    (Memcached not
+                                                    applicable)</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Each scanning thread
+                                                            walks its own
+                                                            leaf-page chain, and
+                                                            document-level locks
+                                                            seldom collide, so
+                                                            adding cores
+                                                            translates into
+                                                            almost linear
+                                                            gains—highest
+                                                            core-scalability in
+                                                            the range workload.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Extra cores help
+                                                            until shared
+                                                            block-cache and
+                                                            merge buffers
+                                                            saturate; the need
+                                                            to reconcile results
+                                                            from overlapping SST
+                                                            levels limits
+                                                            per-core benefit,
+                                                            placing its
+                                                            scalability below
+                                                            MongoDB's.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            The single command
+                                                            loop handles every
+                                                            SCAN; once one core
+                                                            is saturated extra
+                                                            cores sit idle, so
+                                                            scalability
+                                                            plunges—efficiency
+                                                            drops most sharply
+                                                            after the first
+                                                            thread.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Latency Analysis -->
+            <section id="latency-section" class="section-content hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-6">Latency Analysis</h2>
+
+                    <!-- Latency Percentiles -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-8">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Latency Percentiles by Workload
+                        </h3>
+
+                        <!-- Grid of 4 workload charts with explanations -->
+                        <div class="space-y-8">
+                            <!-- Balanced Workload -->
+                            <div
+                                class="border-l-4 border-blue-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-blue-800 mb-4"
+                                >
+                                    1. Balanced workload (50% reads / 50%
+                                    writes)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="balancedLatencyChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-blue-800"
+                                                    >Observed Order:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >RocksDB < Redis < Memcached
+                                                    < MongoDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Most requests are
+                                                            answered from the
+                                                            block cache or the
+                                                            memtable, yielding
+                                                            sub-10 µs averages
+                                                            and tightly
+                                                            clustered tails.
+                                                            Compaction threads
+                                                            occasionally
+                                                            pre-empt cache
+                                                            lines, so the
+                                                            99th-percentile
+                                                            ticks up to ~20 µs,
+                                                            but the gap remains
+                                                            modest.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Command execution is
+                                                            single-threaded but
+                                                            fully in RAM, so the
+                                                            mean is only ~70 µs.
+                                                            Occasional AOF
+                                                            fsyncs or hash-table
+                                                            rehashes introduce
+                                                            ~2× jumps at P95 and
+                                                            P99.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Additional worker
+                                                            threads introduce
+                                                            short lock waits on
+                                                            hash buckets and
+                                                            slab metadata; these
+                                                            pushes the 95th and
+                                                            99th percentiles to
+                                                            ~2.5× the mean.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Each operation
+                                                            triggers a B⁺-tree
+                                                            traversal and, for
+                                                            writes, a journal
+                                                            append. Cache misses
+                                                            or group-commit
+                                                            flushes extend some
+                                                            requests beyond 500
+                                                            µs, creating the
+                                                            tallest red bar in
+                                                            this panel.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Read Heavy Workload -->
+                            <div
+                                class="border-l-4 border-orange-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-orange-800 mb-4"
+                                >
+                                    2. Read-heavy workload (90% reads / 10%
+                                    writes)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="readHeavyLatencyChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-orange-800"
+                                                    >Observed Order:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >RocksDB < Redis < Memcached
+                                                    < MongoDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Point look-ups that
+                                                            pass the Bloom
+                                                            filter are completed
+                                                            from memory in ~8 µs
+                                                            on average; only
+                                                            cache misses elevate
+                                                            tail latencies to
+                                                            ~30 s.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Reads remain an O(1)
+                                                            hash probe, but
+                                                            periodic eviction
+                                                            and AOF activity
+                                                            stretch the 99th
+                                                            percentile to ~180
+                                                            s.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Mean latency sits
+                                                            near Redis, yet lock
+                                                            contention on
+                                                            heavily read buckets
+                                                            broadens the tail to
+                                                            ~290 s.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Every miss forces a
+                                                            random 4 KB SSD
+                                                            read; when several
+                                                            threads collide on
+                                                            the I/O queue, tail
+                                                            latency rises above
+                                                            450 s.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Write Heavy Workload -->
+                            <div
+                                class="border-l-4 border-green-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-green-800 mb-4"
+                                >
+                                    3. Write-heavy workload (90% writes / 10%
+                                    reads)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="writeHeavyLatencyChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-green-800"
+                                                    >Observed Order:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >RocksDB < Redis < Memcached
+                                                    < MongoDB</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Inserts land in the
+                                                            memtable and WAL,
+                                                            both sequential, so
+                                                            average latency
+                                                            remains in
+                                                            single-digit
+                                                            microseconds;
+                                                            background
+                                                            compaction is
+                                                            decoupled, keeping
+                                                            the tail below 25
+                                                            µs.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            The fork-based AOF
+                                                            writer flushes once
+                                                            per second
+                                                            (fsync-everysec),
+                                                            producing occasional
+                                                            stalls that widen
+                                                            P95 and P99 to
+                                                            roughly double the
+                                                            mean.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-100 rounded border-l-4 border-purple-400"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-700 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-700"
+                                                            >Memcached</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Each mutation locks
+                                                            a slab class and a
+                                                            hash bucket; as
+                                                            update pressure
+                                                            rises, those locks
+                                                            inflate the 99th
+                                                            percentile to >300
+                                                            µs.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >4</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Page splits and
+                                                            synchronous journal
+                                                            writes dominate;
+                                                            worst-case requests
+                                                            exceed 500 µs,
+                                                            explaining the
+                                                            pronounced red bar.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Range Query Workload -->
+                            <div
+                                class="border-l-4 border-red-500 pl-6 py-4 rounded-r-lg bg-white"
+                            >
+                                <h4
+                                    class="text-lg font-semibold text-red-800 mb-4"
+                                >
+                                    4. Range-query workload (95% scans / 5%
+                                    inserts)
+                                </h4>
+                                <div
+                                    class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                                >
+                                    <div>
+                                        <div
+                                            id="rangeQueryLatencyChart"
+                                            class="chart-container"
+                                        ></div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-gray-50 rounded">
+                                            <div class="mb-3">
+                                                <span
+                                                    class="font-semibold text-red-800"
+                                                    >Observed Order:</span
+                                                >
+                                                <span
+                                                    class="text-sm text-gray-700"
+                                                    >RocksDB < MongoDB <
+                                                    Redis</span
+                                                >
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-green-50 rounded border-l-4 border-green-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-green-800 text-lg"
+                                                        >1</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-green-800"
+                                                            >RocksDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Each SSTable is
+                                                            already sorted, so a
+                                                            range iterator can
+                                                            stream large,
+                                                            contiguous blocks
+                                                            from disk. Leveled
+                                                            compaction keeps
+                                                            overlap low, meaning
+                                                            the scan seldom has
+                                                            to merge more than a
+                                                            couple of files at
+                                                            once. As a result,
+                                                            both the average and
+                                                            the 99ᵗʰ-percentile
+                                                            stay well under 1
+                                                            ms.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-blue-50 rounded border-l-4 border-blue-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-blue-800 text-lg"
+                                                        >2</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-blue-800"
+                                                            >MongoDB</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            Leaf pages in its
+                                                            B⁺-tree are linked
+                                                            sequentially; once
+                                                            the first key is
+                                                            found the cursor
+                                                            follows those links
+                                                            in order. However,
+                                                            every page hop still
+                                                            involves pointer
+                                                            chasing and may
+                                                            trigger an uncached
+                                                            4 KB read, so tail
+                                                            latency rises into
+                                                            the low-millisecond
+                                                            range—slightly above
+                                                            RocksDB's flat-file
+                                                            stream but still
+                                                            respectable.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="flex items-start space-x-3 p-3 bg-purple-50 rounded border-l-4 border-purple-500"
+                                                >
+                                                    <span
+                                                        class="font-bold text-purple-800 text-lg"
+                                                        >3</span
+                                                    >
+                                                    <div>
+                                                        <span
+                                                            class="font-semibold text-purple-800"
+                                                            >Redis</span
+                                                        >
+                                                        <p
+                                                            class="text-sm text-gray-700 mt-1"
+                                                        >
+                                                            The native key space
+                                                            is hash-distributed,
+                                                            so there is no
+                                                            intrinsic order. A
+                                                            true range therefore
+                                                            forces a SCAN over
+                                                            all buckets while
+                                                            the single event
+                                                            loop remains busy.
+                                                            This full-space walk
+                                                            produces long
+                                                            pauses, pushing the
+                                                            95ᵗʰ and 99ᵗʰ
+                                                            percentiles into
+                                                            multi-millisecond
+                                                            territory and giving
+                                                            Redis the poorest
+                                                            latency in this
+                                                            workload.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Design Decision Impact Analysis -->
+            <section id="design-section" class="section-content hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-6">Use Case Analysis</h2>
+                    <p class="text-gray-600 mb-8">
+                        Understanding how each database engine's architectural
+                        choices create specific performance characteristics and
+                        determine optimal use cases.
+                    </p>
+
+                    <div class="space-y-8">
+                        <!-- RocksDB Analysis -->
+                        <div class="bg-white p-8 rounded-lg shadow">
+                            <div class="flex items-center mb-6">
+                                <div
+                                    class="w-4 h-4 bg-green-500 rounded-full mr-3"
+                                ></div>
+                                <h3 class="text-xl font-bold text-green-700">
+                                    RocksDB — Log-Structured Merge Tree
+                                </h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-green-800 mb-3"
+                                    >
+                                        Relative Strengths
+                                    </h4>
+                                    <div
+                                        class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            <strong
+                                                >Outperforms the other
+                                                engines</strong
+                                            >
+                                            on point reads, writes, and range
+                                            scans.
+                                        </p>
+                                        <p class="text-gray-700">
+                                            Combines Bloom-filtered look-ups, an
+                                            in-memory memtable, and sequential
+                                            SST streaming to minimise both seek
+                                            count and latency.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-orange-800 mb-3"
+                                    >
+                                        Relative Weakness
+                                    </h4>
+                                    <div
+                                        class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Displays the
+                                            <strong
+                                                >steepest decline in scaling
+                                                efficiency</strong
+                                            >
+                                            once several foreground threads and
+                                            background compaction threads
+                                            compete for shared cache lines and
+                                            I/O bandwidth.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-gray-800 mb-3"
+                                    >
+                                        Best-fit Workload
+                                    </h4>
+                                    <div
+                                        class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Well suited to
+                                            <strong
+                                                >data-ingest pipelines</strong
+                                            >
+                                            that are dominated by high-volume,
+                                            append-only writes—examples include
+                                            <strong
+                                                >metrics collectors, time-series
+                                                databases, and log aggregation
+                                                tiers</strong
+                                            >. In such systems the write path is
+                                            the performance gate, while read
+                                            access is typically limited to
+                                            occasional point look-ups from
+                                            monitoring dashboards. RocksDB's
+                                            superior single-thread ingest rate
+                                            and low-latency reads directly
+                                            satisfy these needs, and its
+                                            imperfect multi-core scaling is
+                                            largely irrelevant because ingestion
+                                            is often handled by a handful of
+                                            long-lived writer threads rather
+                                            than hundreds of concurrent clients.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Redis Analysis -->
+                        <div class="bg-white p-8 rounded-lg shadow">
+                            <div class="flex items-center mb-6">
+                                <div
+                                    class="w-4 h-4 bg-purple-500 rounded-full mr-3"
+                                ></div>
+                                <h3 class="text-xl font-bold text-purple-700">
+                                    Redis — In-Memory Data-Structure Store
+                                </h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-green-800 mb-3"
+                                    >
+                                        Relative Strengths
+                                    </h4>
+                                    <div
+                                        class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            Provides
+                                            <strong
+                                                >microsecond-level
+                                                latency</strong
+                                            >
+                                            for both reads and writes as long as
+                                            the data remain resident in RAM.
+                                        </p>
+                                        <p class="text-gray-700">
+                                            Offers lightweight persistence
+                                            controls, allowing the write path to
+                                            remain short when durability can be
+                                            relaxed.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-orange-800 mb-3"
+                                    >
+                                        Relative Weaknesses
+                                    </h4>
+                                    <div
+                                        class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            <strong
+                                                >Throughput plateaus
+                                                quickly</strong
+                                            >
+                                            once additional CPU cores are
+                                            introduced because all commands
+                                            execute in a single event loop.
+                                        </p>
+                                        <p class="text-gray-700">
+                                            Lacks intrinsic key ordering,
+                                            forcing range queries to devolve
+                                            into full key-space scans.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-gray-800 mb-3"
+                                    >
+                                        Best-fit Workload
+                                    </h4>
+                                    <div
+                                        class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Ideal for
+                                            <strong
+                                                >front-end caching layers,
+                                                user-session stores, real-time
+                                                counters, or
+                                                leaderboards</strong
+                                            >
+                                            where every request must complete in
+                                            microseconds and the entire working
+                                            set is expected to fit comfortably
+                                            in memory. These workloads issue
+                                            almost exclusively point operations,
+                                            tolerate relaxed durability, and are
+                                            typically sharded by client
+                                            libraries, so neither ordered range
+                                            queries nor multi-core scalability
+                                            are critical. Redis's latency edge
+                                            therefore translates directly into
+                                            perceivable application
+                                            responsiveness.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memcached Analysis -->
+                        <div class="bg-white p-8 rounded-lg shadow">
+                            <div class="flex items-center mb-6">
+                                <div
+                                    class="w-4 h-4 bg-indigo-500 rounded-full mr-3"
+                                ></div>
+                                <h3 class="text-xl font-bold text-indigo-700">
+                                    Memcached — In-Memory Hash Cache
+                                </h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-green-800 mb-3"
+                                    >
+                                        Relative Strengths
+                                    </h4>
+                                    <div
+                                        class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            Achieves
+                                            <strong
+                                                >point-operation latency only
+                                                modestly slower than
+                                                Redis</strong
+                                            >, while remaining entirely
+                                            stateless and free from persistence
+                                            overhead.
+                                        </p>
+                                        <p class="text-gray-700">
+                                            Avoids any write-ahead logging,
+                                            eliminating fsync stalls.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-orange-800 mb-3"
+                                    >
+                                        Relative Weaknesses
+                                    </h4>
+                                    <div
+                                        class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            <strong
+                                                >Hash-bucket and slab-allocator
+                                                mutexes become hot</strong
+                                            >
+                                            with more than a handful of worker
+                                            threads, limiting scaling benefits.
+                                        </p>
+                                        <p class="text-gray-700">
+                                            Offers no native mechanism for
+                                            ordered scans or durable storage.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-gray-800 mb-3"
+                                    >
+                                        Best-fit Workload
+                                    </h4>
+                                    <div
+                                        class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Excels as a
+                                            <strong
+                                                >transient edge cache</strong
+                                            >
+                                            in front of a durable data store—for
+                                            example,
+                                            <strong
+                                                >CDN metadata, web-session
+                                                tokens, or API throttling
+                                                keys</strong
+                                            >. In these scenarios, occasional
+                                            data loss is acceptable, operational
+                                            simplicity is paramount, and the
+                                            application tier already handles
+                                            sharding. Because requests are
+                                            dominated by single-key look-ups and
+                                            the cache layer is not expected to
+                                            scale linearly with core count,
+                                            Memcached's modest latency advantage
+                                            over disk-backed systems outweighs
+                                            its scaling ceiling and functional
+                                            limitations.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MongoDB Analysis -->
+                        <div class="bg-white p-8 rounded-lg shadow">
+                            <div class="flex items-center mb-6">
+                                <div
+                                    class="w-4 h-4 bg-blue-500 rounded-full mr-3"
+                                ></div>
+                                <h3 class="text-xl font-bold text-blue-700">
+                                    MongoDB — WiredTiger B⁺-Tree Engine
+                                </h3>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-green-800 mb-3"
+                                    >
+                                        Relative Strengths
+                                    </h4>
+                                    <div
+                                        class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500"
+                                    >
+                                        <p class="text-gray-700 mb-3">
+                                            Retains the
+                                            <strong
+                                                >highest fraction of ideal
+                                                speed-up</strong
+                                            >
+                                            as threads increase, owing to
+                                            document-level locks and batched
+                                            journal commits.
+                                        </p>
+                                        <p class="text-gray-700 mb-3">
+                                            Delivers range-scan performance
+                                            second only to RocksDB, aided by
+                                            sequential leaf-node links and
+                                            integrated secondary indexes.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-orange-800 mb-3"
+                                    >
+                                        Relative Weaknesses
+                                    </h4>
+                                    <div
+                                        class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Exhibits the
+                                            <strong
+                                                >slowest point-operation latency
+                                                and the lowest single-thread
+                                                throughput</strong
+                                            >, as each request traverses
+                                            multiple B-tree levels and incurs
+                                            journal overhead.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4
+                                        class="text-lg font-semibold text-gray-800 mb-3"
+                                    >
+                                        Best-fit Workload
+                                    </h4>
+                                    <div
+                                        class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500"
+                                    >
+                                        <p class="text-gray-700">
+                                            Best matched to
+                                            <strong
+                                                >document-centric OLTP or
+                                                micro-service back-end
+                                                workloads</strong
+                                            >
+                                            that value flexible JSON schemas,
+                                            secondary-index range filters, and
+                                            multi-document transactional
+                                            guarantees. Such systems are
+                                            typically deployed on multi-core
+                                            servers and serve many concurrent
+                                            users, so MongoDB's superior scaling
+                                            efficiency and ordered-scan
+                                            capability provide tangible
+                                            benefits, while its higher
+                                            per-operation latency is masked by
+                                            horizontal scale and
+                                            application-level caching.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script src="app.js"></script>
+    </body>
+</html>
