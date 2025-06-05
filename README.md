@@ -53,44 +53,6 @@ This dashboard provides interactive visualizations and analysis of benchmark res
 
 -   See in Final Report.pdf
 
-## Dashboard Features
-
-### 1. Performance Overview
-
--   Summary cards showing best performers for each workload
--   Overall throughput comparison across all databases
--   Peak performance metrics by threading configuration
-
-### 2. Data Structure Comparison
-
--   Thread scaling analysis for each workload type
--   Performance heatmap visualization
--   Research insights and architectural trade-offs
-
-### 3. Workload-Specific Analysis
-
--   Detailed performance breakdown by thread count
--   Workload-specific optimization patterns
--   Threading sweet spots identification
-
-### 4. Scalability Analysis
-
--   Threading efficiency calculations (% of ideal performance)
--   Scaling bottleneck identification
--   Optimal thread configuration recommendations
-
-### 5. Latency Analysis
-
--   Average, 95th, and 99th percentile latency metrics
--   Latency vs throughput trade-offs
--   Response time distribution analysis
-
-### 6. Design Impact Analysis
-
--   Architectural implications of data structure choices
--   Performance trade-offs between consistency and speed
--   Use case recommendations based on workload patterns
-
 ## Technology Stack
 
 ### Backend
