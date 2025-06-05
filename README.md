@@ -51,18 +51,7 @@ This dashboard provides interactive visualizations and analysis of benchmark res
 
 ### Performance Results Summary
 
-#### Best Throughput by Data Structure:
-
--   **Hash Table (In-Memory)**: 103,520 ops/sec (Redis, balanced, 16 threads)
--   **LSM Tree**: 119,190 ops/sec (RocksDB, read-heavy, 8 threads)
--   **B+ Tree**: 51,414 ops/sec (MongoDB, balanced, 16 threads)
-
-#### Key Performance Insights:
-
-1. **Threading Scalability**: RocksDB achieves peak performance at 4-8 threads with optimal threading at 4 threads
-2. **Linear Scaling**: Redis demonstrates consistent linear scaling across all workloads
-3. **Range Query Performance**: RocksDB dominates with 67,331 ops/sec vs Redis at 2,244 ops/sec (30x difference)
-4. **Memory Contention**: Most systems show performance degradation beyond 8 threads
+-   See in Final Report.pdf
 
 ## Dashboard Features
 
@@ -192,59 +181,3 @@ python app.py
     ]
 }
 ```
-
-## Benchmark Methodology
-
-### Test Environment
-
--   **Platform**: macOS Darwin 24.5.0
--   **Hardware**: Standard benchmark configuration
--   **Isolation**: Single database per test run to avoid resource contention
--   **Warmup**: Database warmup period before benchmark execution
-
-### Measurement Approach
-
--   **Throughput**: Operations per second during steady-state execution
--   **Latency**: Response time measurements at various percentiles
--   **Scaling**: Performance efficiency relative to single-threaded baseline
--   **Consistency**: Multiple runs averaged for reliable results
-
-### Data Collection
-
--   **Raw Results**: Original YCSB output files preserved
--   **Processing**: Automated synthesis into structured formats
--   **Validation**: Data integrity checks and outlier detection
--   **Reproducibility**: Standardized configurations and execution scripts
-
-## Research Applications
-
-This dashboard and benchmark suite supports:
-
-1. **Academic Research**: Comparative analysis of data structure performance
-2. **System Design**: Architecture decision support for database selection
-3. **Performance Engineering**: Optimization strategy development
-4. **Educational Use**: Understanding trade-offs between different database designs
-5. **Industry Analysis**: Real-world performance evaluation under various workloads
-
-## Future Enhancements
-
--   Additional database support (PostgreSQL, Cassandra, etc.)
--   Custom workload definition interface
--   Real-time benchmarking integration
--   Machine learning-based performance prediction
--   Export functionality for research publications
--   A/B testing framework for configuration optimization
-
-## Contributing
-
-Contributions welcome for:
-
--   Additional visualization types
--   New database integrations
--   Performance analysis algorithms
--   UI/UX improvements
--   Documentation enhancements
-
-## License
-
-This visualization dashboard is part of the Database Benchmark Suite. See main project license for details.
